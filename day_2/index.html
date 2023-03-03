@@ -5,8 +5,110 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Day 2</title>
+    <style>
+        .heading{
+            text-align: center;
+            font-size: 28px;
+            font-weight: bolder;
+            margin-top: 50px;
+        }
+
+        .btn{
+            padding: 5px 10px;
+            border: 1px solid black;
+            border-radius: 0.5rem;
+            font-size: medium;
+            font-weight:bold;
+            background-color: white;
+        }
+
+        .btn:hover{
+            transform: scale(1.1);
+        }
+
+        table{
+            width: 40%;
+            margin: 30px auto;
+            padding: 10px;
+            border-collapse: collapse;
+        }
+
+        tr:hover{
+            background-color: rgba(211, 211, 211, 0.653);
+        }
+
+        td{
+            border-bottom: 2px solid black;
+            padding: 10px;
+            border-collapse: collapse;
+            font-size: larger;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    
+    <div class="heading">To Do App</div>
+    <table id="task-table">
+        
+    </table>
+    <div style="text-align : center;">
+        <button class="btn" onclick="add_task()">Add New Task</button>
+    </div>
+            
+    <script>
+        var task = ["Formative Assessment","Lab Record","Presonal Project"];
+
+        function add_task(){
+            var new_task = prompt("Enter The New Task ")
+            if(new_task){
+                task[task.length] = new_task;
+                render_task();
+            }
+        }
+
+        function render_task(){
+            let task_src = "";
+            if(task.length)
+            {
+                for(i =0 ; i < task.length; i++){
+                    task_src += `
+                        <tr class="task-row">
+                            <td style="width:80%">${task[i]}</td>
+                            <td style="width:10%">
+                                <button class="btn" onclick="edit_task(${i})">Edit</button>
+                            </td>
+                            <td style="width:10%">
+                                <button class="btn" onclick="delete_task(${i})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+            else{
+                task_src = `
+                    <div style="text-align:center;font-size:18px;">No Task</div>
+                `;
+            }
+            document.getElementById("task-table").innerHTML = task_src;
+        }
+
+        function edit_task(ind){
+
+            var alt_task = prompt("Enter The Changed Task ")
+            if(alt_task){
+                task[ind] = alt_task;
+                render_task();
+            }
+        }
+
+
+        function delete_task(ind){
+            task.splice(ind,ind+1);
+            render_task();
+        }
+
+        render_task();
+        
+    </script>
 </body>
 </html>
