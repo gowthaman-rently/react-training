@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 3</title>
+    <link href="./style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="heading">To Do App</div>
+    <form onsubmit="{submit_task();return false;}">
+        <div id="task-container">
+        </div> 
+        <button type="submit" style="display: none;"></button>
+    </form>
+   
+    
+    <div style="text-align : center;">
+        <button class="btn" onclick="add_task()">Add New Task</button>
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>
