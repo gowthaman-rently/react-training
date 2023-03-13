@@ -6,7 +6,8 @@
 }
 
 #task-container{
-  margin: 30px 0px;
+  margin: 30px auto;
+
 }
 
 .task-card{
@@ -18,6 +19,11 @@
   border-radius: .2rem;
   font-size: medium;
   font-weight:bold;
+}
+
+.reorder{
+  cursor: row-resize;
+  padding: 10px 0px;
 }
 
 .task-card:hover, .task-card>.task-input:focus{
@@ -58,25 +64,25 @@
 
 
 @media screen and (max-width: 600px) {
-  .task-card{
+  #task-container{
       width:90%;
   }
 }
 
 @media screen and (min-width: 600px) {
-  .task-card{
+  #task-container{
       width:80%;
   }
 }
 
 @media screen and (min-width: 800px) {
-  .task-card{
+  #task-container{
       width:60%;
   }
 }
 
 @media screen and (min-width: 1024px) {
-  .task-card{
+  #task-container{
       width:40%;
   }
 }
