@@ -1,3 +1,8 @@
+body{
+  background-color: #FEFBE9;
+  font-family: cursive !important;
+}
+
 .heading{
   text-align: center;
   font-size: 28px;
@@ -10,30 +15,31 @@
 
 }
 
+.add-input{
+  width: 100%;
+  padding: 0px 10px 0px 0px!important;
+}
+
+.add-btn{
+  padding: 0px 10px;
+}
+
 .task-card{
   display: flex;
   margin: auto;
   justify-content: space-between;
   padding: 15px;
-  border-bottom: 1px solid black;
-  border-radius: .2rem;
+  border-bottom: 0px solid black;
   font-size: medium;
   font-weight:bold;
-}
-
-.reorder{
-  cursor: row-resize;
-  padding: 10px 0px;
-}
-
-.task-card:hover, .task-card>.task-input:focus{
-  background-color: rgba(211, 211, 211, 0.432);
+  border-radius: 1rem !important;
+  margin: 10px 0px;
 }
 
 .task-input{
   width: 100%;
   border: 0px;
-  padding: 5px;
+  padding: 10px 5px;
   font-size: larger;
   background-color: transparent;
 }
@@ -44,7 +50,7 @@
 }
 
 .task-input-container{
-  width:80%
+  width:100%
 }
 
 .btn{

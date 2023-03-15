@@ -2,15 +2,14 @@ import './App.css';
 import React from 'react';
 import IconButton from '@mui/material/IconButton';
 import Card from '@mui/material/Card';
-import Button from '@mui/material/Button';
-import DeleteIcon from '@mui/icons-material/Delete';
-import DragIndicatorOutlinedIcon from '@mui/icons-material/DragIndicatorOutlined';
+import AddIcon from '@mui/icons-material/Add';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
+import { TextField } from '@mui/material';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Box from '@mui/material/Box';
-import Checkbox from '@mui/material/Checkbox';
+import TaskCard from './components/TaskCard';
 
 class App extends React.Component {
   constructor(props){ 
@@ -23,15 +22,21 @@ class App extends React.Component {
     }
   }
 
-  add_task(){
+  addTask(){
+    const val = document.getElementById("add-input");
+    if(val.value.length === 0){
+      document.getElementById("add-input").label = "error";
+      return ;
+    }
     this.setState({
-      task : [...this.state.task, {"text":"","status":false}],
-      current_ind : this.state.task.length,
+      task : [...this.state.task, {"text":val.value,"status":false}],
+      current_ind : false,
       value: this.state.value
     })
+    val.value ="";
   }  
 
-  edit_task(ind, event){
+  editTask(ind, event){
     if(event.code === "Enter"){
       document.getElementById("task-"+(ind)).blur()
       return ;
@@ -45,7 +50,7 @@ class App extends React.Component {
     })
   }
 
-  delete_task(ind){
+  deleteTask(ind){
     var task_list = this.state.task;
     task_list.splice(ind,1);
     console.log(task_list);
@@ -76,12 +81,6 @@ class App extends React.Component {
     })
   }
 
-  componentDidUpdate(){
-    if(this.state.current_ind !== false && this.state.current_ind < this.state.task.length  && this.state.task.length !== 0){
-      document.getElementById("task-"+(this.state.current_ind)).focus();
-    }
-  }
-
   handleChange = (event, newValue) => {
     this.setState({
       value:newValue,
@@ -105,35 +104,13 @@ class App extends React.Component {
     const com_items = [];
     this.state.task
     .map((item,ind) => {
-      if(item.status){
-        com_items.push(
-          <Card variant="outlined" draggable="true" key={ind} id={ind} className='task-card' onDrop={(event)=>this.drop(event, ind)} onDragOver={(event)=>this.allowDrop(event)} onDragStart={(event)=>{this.drag(event)}} >
-            <DragIndicatorOutlinedIcon className='reorder' titleAccess='Reorder'></DragIndicatorOutlinedIcon>
-            <Checkbox defaultChecked  onClick={()=>this.handleTask(ind)}/>
-            <div className="task-input-container">
-                <input className="task-input" disabled type="text" value={item.text} onInput={(event)=>this.edit_task(ind, event)} onKeyDown={(event)=>this.edit_task(ind, event)} id={"task-"+ind}/>
-            </div>
-          </Card>
-        );
-      }
-      else{
-        items.push(
-          <Card variant="outlined" draggable="true" id={ind} className='task-card' key={ind} 
-            onDrop={(event)=>this.drop(event, ind)} onDragOver={(event)=>this.allowDrop(event)} onDragStart={(event)=>{this.drag(event)}} >
-            <DragIndicatorOutlinedIcon className='reorder' titleAccess='Reorder' ></DragIndicatorOutlinedIcon>
-            <Checkbox  onClick={()=>this.handleTask(ind)}/>
-            <div className="task-input-container">
-                <input className="task-input" type="text" value={item.text} onInput={(event)=>this.edit_task(ind, event)} onKeyDown={(event)=>this.edit_task(ind, event)} id={"task-"+ind}/>
-            </div>
-            <div className="task-btn-container"> 
-              <IconButton onClick={()=>this.delete_task(ind)} title='Delete'>
-                <DeleteIcon ></DeleteIcon>
-              </IconButton>
-            </div>
-          </Card>
-        );
-      }
-      return items;
+      const cardJSX = <TaskCard ind={ind} item={item}  key={ind}
+          drop = {(event, ind)=>this.drop(event, ind)} allowDrop = {(event)=>this.allowDrop(event)} drag={(event)=>this.drag(event)}
+          handleTask ={(ind)=>this.handleTask(ind)} editTask = {(ind, event)=>this.editTask(ind, event)} deleteTask={(ind)=>this.deleteTask(ind)}
+        ></TaskCard>;
+      
+      if(item.status) com_items.push(cardJSX);
+      else items.push(cardJSX);
     });
 
     return (
@@ -141,20 +118,24 @@ class App extends React.Component {
         <div className="heading">
           To Do App
         </div>
-        
-        <div id='task-container'>
+        <div id='task-container'>          
           <TabContext value={this.state.value}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <TabList onChange={this.handleChange} aria-label="lab API tabs example">
+              <TabList onChange={this.handleChange} >
                 <Tab label="Tasks" value="1" />
                 <Tab label="Completed" value="2" />
               </TabList>
             </Box>
             <TabPanel value="1" style={{padding:"0px"}}>
-                {items.length !== 0?items:<div style={{fontWeight:"bold",textAlign:"center", padding:"10px"}}>No Task</div>}
-                <div style={{textAlign : 'center',padding : "30px "}}>
-                  <Button onClick={()=>this.add_task()} style={{color:"black",fontWeight:"bold",border:"black 2px solid"}} variant="outlined" color="primary">Add New Task</Button>
-                </div>
+              <form onSubmit={(event)=>{event.preventDefault();this.addTask(); return false;}} >
+                <Card className="task-card">
+                  <TextField className="add-input" label="Add New Task" variant="standard" id="add-input"/>
+                  <IconButton type="submit" className='add-btn'><AddIcon/></IconButton>               
+                </Card>
+              </form>
+              <hr/>
+              {items.length !== 0?items:<div style={{fontWeight:"bold",textAlign:"center", padding:"10px"}}>No Task</div>}
+                
             </TabPanel>
             <TabPanel value="2" style={{padding:"0px"}}>
                   {com_items.length !== 0?com_items:<div style={{fontWeight:"bold",textAlign:"center",padding:"10px"}}>No Task</div>}
