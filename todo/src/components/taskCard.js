@@ -8,14 +8,14 @@ class TaskCard extends React.Component{
 
     render(){
         let delete_btn;
-        if(this.props.item.status){
-            delete_btn = ""
-        }
-        else{
-            delete_btn = <IconButton onClick={()=>this.props.deleteTask(this.props.ind)} title='Delete'>
-                <DeleteIcon></DeleteIcon>
+        // if(this.props.item.status){
+        //     delete_btn = ""
+        // }
+        // else{
+            delete_btn = <IconButton onClick={()=>this.props.deleteTask(this.props.ind)} title='Delete' className='text-danger'>
+                <DeleteIcon className="text-danger"></DeleteIcon>
             </IconButton>;
-        }
+        // }
         return <Card variant="outlined" draggable="true" id={this.props.ind} className='task-card' key={this.props.ind} 
             onDrop={(event)=>this.props.drop(event, this.props.ind)} onDragOver={(event)=>this.props.allowDrop(event)} onDragStart={(event)=>{this.props.drag(event)}} >
             <Checkbox  onClick={()=>this.props.handleTask(this.props.ind)} defaultChecked={this.props.item.status?true:false}/>

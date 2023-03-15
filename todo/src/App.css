@@ -1,6 +1,10 @@
 body{
-  background-color: #FEFBE9;
+  color: black;
   font-family: cursive !important;
+}
+
+.m-0{
+  margin: 0px !important;
 }
 
 .heading{
@@ -24,6 +28,14 @@ body{
   padding: 0px 10px;
 }
 
+.text-danger:hover{
+  color:#dc3545;
+}
+
+input:disabled{
+  text-decoration: line-through;
+}
+
 .task-card{
   display: flex;
   margin: auto;
@@ -34,6 +46,10 @@ body{
   font-weight:bold;
   border-radius: 1rem !important;
   margin: 10px 0px;
+}
+
+.task-card:hover{
+  background-color: rgb(240, 240, 240);
 }
 
 .task-input{
