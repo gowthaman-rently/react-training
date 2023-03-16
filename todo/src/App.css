@@ -1,7 +1,12 @@
 body{
   color: black;
   font-family: cursive !important;
+  background-color: #ffc1074a;
 }
+/* 
+.text-secondary{
+  color: #ffc107 !important;
+} */
 
 .m-0{
   margin: 0px !important;
@@ -11,12 +16,34 @@ body{
   text-align: center;
   font-size: 28px;
   font-weight: bolder;
-  margin-top: 50px;
 }
 
 #task-container{
   margin: 30px auto;
 
+}
+
+#modal{
+  position: 'absolute';
+  top: '50%';
+  left: '50%';
+  transform: 'translate(-50%, -50%)';
+  width: 400;
+  border: '0px solid #000';
+  box-shadow: 24;
+  border-radius: 1.5rem !important;
+}
+
+#modal-title{
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid gray;
+  font-size: medium;
+  font-weight: bold;
+}
+
+#modal-title>h4{
+  margin: 8px 0px;
 }
 
 .add-input{
@@ -32,8 +59,16 @@ body{
   color:#dc3545;
 }
 
-input:disabled{
+.completed{
   text-decoration: line-through;
+}
+
+input:disabled{
+  color: black;
+}
+
+input:disabled.completed{
+  color: rgb(98, 98, 98);
 }
 
 .task-card{
@@ -60,6 +95,18 @@ input:disabled{
   background-color: transparent;
 }
 
+.modal-input{
+  width: 100%;
+  border: 1px solid black;
+  border-radius: 1rem;
+  font-size: larger;
+  padding: 15px;
+}
+
+.modal-input:focus{
+  outline: 0;
+}
+
 .task-input:focus{
   border-bottom: 2px solid black;
   outline: none;
@@ -67,6 +114,10 @@ input:disabled{
 
 .task-input-container{
   width:100%
+}
+
+.task-btn-container{
+  display: flex;
 }
 
 .btn{

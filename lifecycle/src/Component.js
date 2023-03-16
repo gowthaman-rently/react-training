@@ -3,32 +3,32 @@ import React from 'react';
 class Component extends React.Component{
 
     componentWillMount(){
-        console.log("componentWillMount()");
+        console.log("componentWillMount()", this.props.message,  this.props.status);
     }
 
     componentDidMount(){
-        console.log("componentDidMount()");
+        console.log("componentDidMount()", this.props.message,  this.props.status);
     }
 
     componentWillReceiveProps(){
-        console.log("componentWillRecieveProps()");
+        console.log("componentWillRecieveProps()", this.props.message,  this.props.status);
     }
     
     shouldComponentUpdate(){
-        console.log("shouldComponentUpdate()");
+        console.log("shouldComponentUpdate()", this.props.message,  this.props.status);
         return true;
     }
 
     componentWillUpdate(){
-        console.log("componentWilUpdate()");
+        console.log("componentWilUpdate()", this.props.message,  this.props.status);
     }
 
     componentDidUpdate(){
-        console.log("componentDidUpdate()");
+        console.log("componentDidUpdate()", this.props.message,  this.props.status);
     }
 
     componentWillUnmount(){
-        console.log("componentWillUnMount()");
+        console.log("componentWillUnMount()", this.props.message,  this.props.status);
     }
 
     update(){
@@ -38,6 +38,7 @@ class Component extends React.Component{
     } 
 
     render(){
+        // console.log("component render");
         return <div>
             {this.props.message}<br></br>
             <button onClick={()=>this.props.changeMessage()}>change</button><br/>

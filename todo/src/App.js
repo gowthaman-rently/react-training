@@ -16,15 +16,16 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+
 class App extends React.Component {
   constructor(props){ 
     super(props) 
         
     this.state = {
-      task : [{"text":"Formative Assessment","status":false, "labels":[]},{"text":"Lab Record","status":false, "labels":[]},{"text":"Presonal Project","status":false, "labels":[]}],
+      task : [{"text":"Formative Assessment","status":false, "labels":["all"]},{"text":"Lab Record","status":false, "labels":["all"]},{"text":"Presonal Project","status":false, "labels":["all"]}],
       current_ind : 0,
-      value : 1,
-      labels : ["All"]
+      value : 0,
+      labels : ["all","important","today"]
     }
   }
 
@@ -35,7 +36,7 @@ class App extends React.Component {
       return ;
     }
     this.setState({
-      task : [{"text":val.value,"status":false,"labels":[]},...this.state.task],
+      task : [{"text":val.value,"status":false,"labels":["all"]},...this.state.task],
       current_ind : false,
       value: this.state.value,
       labels : this.state.labels
@@ -53,7 +54,7 @@ class App extends React.Component {
     this.setState({
       task : task_list,
       current_ind : ind,
-      value: 1
+      value: "1"
     })
   }
 
@@ -96,11 +97,19 @@ class App extends React.Component {
     })
   };
   
-  handleAccordation = (event, newvalue )=>{}
-
   handleTask(id){
     let arr = this.state.task;
     arr[id].status = !arr[id].status;
+    this.setState({
+      value:this.state.value,
+      task: arr,
+      current_ind : false
+    })
+  }
+
+  handleTaskLabel(id,labels){
+    let arr = this.state.task;
+    arr[id].labels = labels;
     this.setState({
       value:this.state.value,
       task: arr,
@@ -113,9 +122,10 @@ class App extends React.Component {
     const com_items = [];
     this.state.task
     .map((item,ind) => {
-      const cardJSX = <TaskCard ind={ind} item={item}  key={ind}
+      const cardJSX = <TaskCard ind={ind} item={item}  key={ind} labels={this.state.labels}
           drop = {(event, ind)=>this.drop(event, ind)} allowDrop = {(event)=>this.allowDrop(event)} drag={(event)=>this.drag(event)}
           handleTask ={(ind)=>this.handleTask(ind)} editTask = {(ind, event)=>this.editTask(ind, event)} deleteTask={(ind)=>this.deleteTask(ind)}
+          handleTaskLabel = {(ind, labels)=>this.handleTaskLabel(ind,labels)}
         ></TaskCard>;
       
       if(item.status) com_items.push(cardJSX);
@@ -131,19 +141,19 @@ class App extends React.Component {
         <div id='task-container'>
           <TabContext value={this.state.value}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <TabList onChange={this.handleChange} >
-                <Tab label="All" value={1} className='text-dark fw-bold fs-6'/>
+              <TabList onChange={this.handleChange} indicatorColor='#ffc107' >
+                <Tabs labels={this.state.labels}></Tabs>
               </TabList>
             </Box>
-            <TabPanel value={1} style={{padding:"0px"}}>
-              <Accordion  className="m-0"  expanded="true">
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <TabPanel value={0} style={{padding:"0px"}}>
+              <Accordion  className="m-0"  expanded={true}>
+                <AccordionSummary>
                 <Typography className='fw-bold text-secondary fs-5'>Task</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <form onSubmit={(event)=>{event.preventDefault();this.addTask(); return false;}} >
                     <Card className="task-card my-2">
-                      <TextField className="add-input" label="Add New Task" variant="standard" id="add-input"/>
+                      <TextField className="add-input" label="Add New Task" variant="standard" id="add-input" autoComplete='off'/>
                       <IconButton type="submit" className='add-btn'><AddIcon/></IconButton>               
                     </Card>
                   </form>
@@ -159,7 +169,7 @@ class App extends React.Component {
                 </AccordionDetails>
               </Accordion>
             </TabPanel>
-            <TabPanel value={2} style={{padding:"0px"}}>
+            <TabPanel value={1} style={{padding:"0px"}}>
             </TabPanel>
           </TabContext>
         </div>
@@ -172,12 +182,15 @@ class App extends React.Component {
 class Tabs extends React.Component {
   
   render() { 
-
-
-    return (<TabList onChange={this.handleChange} >
-      <Tab label="Tasks" value={1} />
-      <Tab label="Completed" value={2} />
-    </TabList>);
+    let tabsList = [];
+    this.props.labels.map((item, ind)=>{
+      tabsList.push(<Tab label={item} value={ind} key={ind} className='text-dark fw-bold fs-6 border-bottom border-warning text-capitalize'/>)
+    })
+    return (
+      < >
+        {tabsList}
+      </>
+    );
   }
 }
 
