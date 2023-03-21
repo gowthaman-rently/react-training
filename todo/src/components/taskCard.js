@@ -63,13 +63,13 @@ class TaskCard extends React.Component{
             radius: 1.5,
             boxShadow: 24,
             p: 3,
-          };
+        };
           
-          let labels = [];
-          this.props.item.labels.map((item,ind)=>{
-            if(item !== "all")
-              labels.push(<Chip label={item} key={ind} className="my-2 p-1 mx-1 text-capitalize"/>)
-          })
+        let labels = [];
+        this.props.item.labels.map((item,ind)=>{
+        if(item !== "all")
+            labels.push(<Chip label={item} key={ind} className="my-2 p-1 mx-1 text-capitalize"/>)
+        })
 
         return <>
         <Card variant="outlined" draggable="true" id={this.props.ind} className='task-card' key={this.props.ind} 
@@ -104,7 +104,7 @@ class TaskCard extends React.Component{
                             labelId="modal-label"
                             id="label"
                             multiple
-                            value={this.props.item.labels}
+                            value={this.props.item.labels.filter((label)=>{if(label!="all") return label})}
                             onChange={(event)=>{this.props.handleTaskLabel(this.props.ind, event.target.value)}}
                             input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
                             renderValue={(selected) => (
@@ -115,15 +115,15 @@ class TaskCard extends React.Component{
                                 </Box>
                             )}
                         >
-                        {this.props.labels.map((label) => (
-                            <MenuItem
-                            key={label}
-                            value={label}
-                            className='text-capitalize'
-                            >
-                            {label}
-                            </MenuItem>
-                        ))}
+                        {
+                            this.props.labels.map((label) => {
+                                if(label!="all"){
+                                    return <MenuItem key={label} value={label} className='text-capitalize' >
+                                    {label}
+                                    </MenuItem>
+                                }
+                             })
+                        }
                         </Select>
                     </FormControl>
                 </Typography>

@@ -54,7 +54,7 @@ class App extends React.Component {
     this.setState({
       task : task_list,
       current_ind : ind,
-      value: "1"
+      value: this.state.value
     })
   }
 
