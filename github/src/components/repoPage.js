@@ -2,21 +2,21 @@ import React from 'react';
 import { CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
 import connect from './connector';
-import UserProfile from './userPageComponents/userProfile';
-import UserDetails from './userPageComponents/userDetails';
 import SearchIcon from '@mui/icons-material/Search';
+import RepoProfile from './repoPageComponents/repoProfile';
 
 
-class UserPage extends React.Component {
+class repoPage extends React.Component {
     state={
         loading : true,
         status : false,
     }
     async componentDidMount(){
-
         const userid = window.location.toString().split("/")[3];
-        const userDetails = await connect("GET",`https://api.github.com/users/${userid}`);
-        if(userDetails.status !== 200){
+        const repoid = window.location.toString().split("/")[3];
+        
+        const repoDetails = await connect("GET",`https://api.github.com/repos/${userid}/${repoid}`);
+        if(repoDetails.status !== 200){
             this.setState({
                 loading : false,
                 status : false
@@ -24,28 +24,10 @@ class UserPage extends React.Component {
             return;
         }
 
-        let userRepos = await connect("GET", userDetails.data.repos_url);
-        if(userDetails.status !== 200){
-            userRepos = {data:[]}
-        }
-
-        let userFollowers = await connect("GET", userDetails.data.followers_url);
-        if(userFollowers.status !== 200){
-            userRepos = {data:[]}
-        }
-
-        let userFollowing = await connect("GET", userDetails.data.following_url.split("{")[0]);
-        if(userFollowing.status !== 200){
-            userRepos = {data:[]}
-        }
-
         this.setState({
             loading : false,
             status : true,
-            userDetails : userDetails.data,
-            userRepos : userRepos.data,
-            userFollowers : userFollowers.data,
-            userFollowing : userFollowing.data
+            repoDetails : repoDetails.data,
         })
     }
 
@@ -55,13 +37,13 @@ class UserPage extends React.Component {
         if(!this.state.loading){
             if(this.state.status){
                 bodyJSX = <div className='row m-0 pt-4'>
-                    <UserProfile user={this.state.userDetails}/>
-                    <UserDetails repos={this.state.userRepos} followers={this.state.userFollowers} following={this.state.userFollowing}/>
+                    <RepoProfile repo={this.state.repoDetails}/>
+                    {/* <repoDetails repos={this.state.userRepos} followers={this.state.userFollowers} following={this.state.userFollowing}/> */}
                 </div>
             }
             else{
                 bodyJSX = <div className='fw-bold fs-3 opacity-50'>
-                    404 <br></br> User not found !!!
+                    404 <br></br> Repo not found !!!
                 </div>;
             }
         }
@@ -89,4 +71,4 @@ class UserPage extends React.Component {
 }
 
 
-export default UserPage;
+export default repoPage;

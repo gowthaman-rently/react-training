@@ -8,7 +8,8 @@ class HomePage extends React.Component {
     constructor(props){
         super();
         this.state = {
-            users : null
+            users : null,
+            loader : true
         }
 
         this.searchResultRef = createRef();
@@ -16,44 +17,56 @@ class HomePage extends React.Component {
 
     timer = null;
     
-    async searchGithub(event){
+    searchGithub(event){
         clearTimeout(this.timer);
+        
+        this.setState({
+            users :null,
+            loader : true
+        })
+        
         if(event.target.value.length === 0){
             this.searchResultRef.current.classList.remove("active");
-            this.setState({options : [<CircularProgress size={25} key="1"/>]});
             return;
         }
-        this.setState({options : [<CircularProgress size={25} key="1" />]});
+        
         this.searchResultRef.current.classList.add("active"); 
-        this.timer = setTimeout(async ()=>{
-            const response = await axios.get(`https://api.github.com/search/users?q=${event.target.value}`)
+
+        this.timer = setTimeout(()=>{
+            console.log("Iam being called ")
+            axios.get(`https://api.github.com/search/users?q=${event.target.value}`)
             .then(
                 (response)=>{
-                    return response.data;
+                    console.log(response.data);
+                    this.setState({
+                        loader : false,
+                        users: response.data.items
+                    })
                 }
             );
-
-            if(response.total_count === 0){
-                this.setState({
-                options:[<div style={{"text-align":"center"}}> No results found !!</div>]
-                });
-                return;
-            }
-
-            let respJSX = response.items.map((item, index)=>{
-                return  <a className="search-result-card" href={item.login} key={index}>
-                    <img className="search-result-img" src={item.avatar_url} alt={item.login}></img>
-                    <div className="search-result-name">{item.login}</div>
-                </a>;
-            });
-
-            this.setState({
-                options: respJSX
-            })
         }, 1500)
     }
 
     render() { 
+
+        let bodyJSX;
+        if(!this.state.loader && this.state.users){
+            if(this.state.users.length === 0){
+                bodyJSX = <div>No Users Found !!!</div>;
+            }
+            else{
+                bodyJSX = this.state.users.map((item, index)=>{
+                    return  <a className="search-result-card" href={item.login} key={index}>
+                        <img className="search-result-img" src={item.avatar_url} alt={item.login}></img>
+                        <div className="search-result-name">{item.login}</div>
+                    </a>;
+                });
+            }
+        }
+        else{
+            bodyJSX = <CircularProgress size={25}/>;
+        }
+
         return ( 
         <div className="App">
             <header className="App-header">
@@ -73,7 +86,7 @@ class HomePage extends React.Component {
                     placeholder="Search Github Username"
                 />
                 <div  id="Search-result" className="Search-result" ref={this.searchResultRef}>
-                  {this.state.options}
+                  {bodyJSX }
                 </div>
             </div>
         </div>
