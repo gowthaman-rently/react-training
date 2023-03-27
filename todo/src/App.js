@@ -182,9 +182,8 @@ class App extends React.Component {
 class Tabs extends React.Component {
   
   render() { 
-    let tabsList = [];
-    this.props.labels.map((item, ind)=>{
-      tabsList.push(<Tab label={item} value={ind} key={ind} className='text-dark fw-bold fs-6 border-bottom border-warning text-capitalize'/>)
+    let tabsList = this.props.labels.map((item, ind)=>{
+      return <Tab label={item} value={ind} key={ind} className='text-dark fw-bold fs-6 border-bottom border-warning text-capitalize'/>
     })
     return (
       < >

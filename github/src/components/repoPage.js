@@ -4,16 +4,17 @@ import { Link } from 'react-router-dom';
 import connect from './connector';
 import SearchIcon from '@mui/icons-material/Search';
 import RepoProfile from './repoPageComponents/repoProfile';
-
+import RepoContent from './repoPageComponents/repoContent';
 
 class repoPage extends React.Component {
     state={
         loading : true,
         status : false,
+        path : ""
     }
     async componentDidMount(){
         const userid = window.location.toString().split("/")[3];
-        const repoid = window.location.toString().split("/")[3];
+        const repoid = window.location.toString().split("/")[4];
         
         const repoDetails = await connect("GET",`https://api.github.com/repos/${userid}/${repoid}`);
         if(repoDetails.status !== 200){
@@ -24,10 +25,34 @@ class repoPage extends React.Component {
             return;
         }
 
+        let repoLanguage = await connect("GET",repoDetails.data.languages_url);
+        if(repoLanguage.status !== 200){
+            repoLanguage = {data:[]}
+        }
+    
         this.setState({
             loading : false,
             status : true,
             repoDetails : repoDetails.data,
+            repoLanguage : repoLanguage.data,
+            path : this.state.path
+        })
+    }
+
+    UpdatePath(newValue){
+        this.setState({
+            ...this.state,
+            path : newValue
+        })
+    }
+
+    AddPath(newValue){
+        if(this.state.path !== ""){
+            newValue = this.state.path + "/" + newValue;
+        }
+        this.setState({
+            ...this.state,
+            path : newValue
         })
     }
 
@@ -37,8 +62,8 @@ class repoPage extends React.Component {
         if(!this.state.loading){
             if(this.state.status){
                 bodyJSX = <div className='row m-0 pt-4'>
-                    <RepoProfile repo={this.state.repoDetails}/>
-                    {/* <repoDetails repos={this.state.userRepos} followers={this.state.userFollowers} following={this.state.userFollowing}/> */}
+                    <RepoProfile repo={this.state.repoDetails} language={this.state.repoLanguage}/>
+                    <RepoContent repoDetails={this.state.repoDetails} path={this.state.path} addPath={(value)=>{this.AddPath(value)}} updatePath={(value)=>{this.UpdatePath(value)}}/>
                 </div>
             }
             else{

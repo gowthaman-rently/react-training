@@ -90,6 +90,14 @@
   font-size: 20px;
 }
 
+.repo-content{
+  background-color: rgba(35, 38, 42, 0.5);
+}
+
+.repo-content:hover{
+  background-color: #282c34;
+}
+
 @media screen and (max-width: 600px) {
   .Search-input, .Search-result{
       width:90%;
