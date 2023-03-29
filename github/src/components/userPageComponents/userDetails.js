@@ -29,11 +29,6 @@ class UserDetails extends React.Component {
             "overflowX" : "hidden"
         };
 
-        let detailsBodyJSX;
-        if(this.state.tab === 0) detailsBodyJSX = <UserRepos repos={this.props.repos} />;
-        else if(this.state.tab === 1) detailsBodyJSX = <UserFollowers followers={this.props.followers} />;
-        else detailsBodyJSX = <UserFollowing following={this.props.following} />;
-
 
         return (
         <>
@@ -45,7 +40,9 @@ class UserDetails extends React.Component {
                         <h5 className={ this.state.tab === 2? "mx-2 fw-bold fs-5" : " mx-2 fw-normal fs-6" } role="button" onClick={()=>{this.changeTab(2)}}>Following <span className='opacity-50'>({this.props.following.length})</span></h5>
                     </div>
                     <div style={userDetailsBody}>
-                        {detailsBodyJSX}
+                        {this.state.tab === 0 && <UserRepos repos={this.props.repos}/>}
+                        {this.state.tab === 1 && <UserFollowers followers={this.props.followers} />}
+                        {this.state.tab === 2 && <UserFollowing following={this.props.following} />}
                     </div>
                     
                 </div>

@@ -1,6 +1,9 @@
 import React, {createRef} from 'react';
 import {  TextField, CircularProgress} from '@mui/material';
-import axios from 'axios';
+import connect from './connector';
+import { debounce } from 'lodash';
+import { Link } from 'react-router-dom';
+
 
 
 class HomePage extends React.Component {
@@ -15,57 +18,35 @@ class HomePage extends React.Component {
         this.searchResultRef = createRef();
     }
 
-    timer = null;
-    
-    searchGithub(event){
-        clearTimeout(this.timer);
-        
-        this.setState({
-            users :null,
-            loader : true
-        })
-        
-        if(event.target.value.length === 0){
-            this.searchResultRef.current.classList.remove("active");
-            return;
-        }
-        
-        this.searchResultRef.current.classList.add("active"); 
-
-        this.timer = setTimeout(()=>{
-            console.log("Iam being called ")
-            axios.get(`https://api.github.com/search/users?q=${event.target.value}`)
+    debounceSearchFunc = debounce(
+        (event)=>{
+            connect("GET",`https://api.github.com/search/users?q=${event.target.value}`)
             .then(
                 (response)=>{
-                    console.log(response.data);
                     this.setState({
                         loader : false,
                         users: response.data.items
                     })
                 }
             );
-        }, 1500)
+        },
+        1500
+    )
+
+    searchGithub(event){
+        this.setState({
+            users :null,
+            loader : true
+        })
+        if(event.target.value.length === 0){
+            this.searchResultRef.current.classList.remove("active");
+            return;
+        }
+        this.searchResultRef.current.classList.add("active"); 
+        this.debounceSearchFunc(event);
     }
 
     render() { 
-
-        let bodyJSX;
-        if(!this.state.loader && this.state.users){
-            if(this.state.users.length === 0){
-                bodyJSX = <div>No Users Found !!!</div>;
-            }
-            else{
-                bodyJSX = this.state.users.map((item, index)=>{
-                    return  <a className="search-result-card" href={item.login} key={index}>
-                        <img className="search-result-img" src={item.avatar_url} alt={item.login}></img>
-                        <div className="search-result-name">{item.login}</div>
-                    </a>;
-                });
-            }
-        }
-        else{
-            bodyJSX = <CircularProgress size={25}/>;
-        }
 
         return ( 
         <div className="App">
@@ -86,7 +67,20 @@ class HomePage extends React.Component {
                     placeholder="Search Github Username"
                 />
                 <div  id="Search-result" className="Search-result" ref={this.searchResultRef}>
-                  {bodyJSX }
+                    {
+                        this.state.loader
+                        ?<CircularProgress size={25}/>
+                        :(
+                            this.state.users
+                            ?this.state.users.map((item, index)=>{
+                                return <Link className="search-result-card" to={item.login} key={index}>
+                                    <img className="search-result-img" src={item.avatar_url} alt={item.login}></img>
+                                    <div className="search-result-name">{item.login}</div>
+                                </Link>;
+                            })
+                            :<div>No Users Found !!!</div>
+                        )
+                    }
                 </div>
             </div>
         </div>

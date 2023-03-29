@@ -7,72 +7,41 @@ import RepoProfile from './repoPageComponents/repoProfile';
 import RepoContent from './repoPageComponents/repoContent';
 
 class repoPage extends React.Component {
-    state={
-        loading : true,
-        status : false,
-        path : ""
+
+    constructor(){
+        super();
+        this.state = {
+            loading : true,
+            status : false
+        }
     }
+    
     async componentDidMount(){
         const userid = window.location.toString().split("/")[3];
         const repoid = window.location.toString().split("/")[4];
         
         const repoDetails = await connect("GET",`https://api.github.com/repos/${userid}/${repoid}`);
+
         if(repoDetails.status !== 200){
             this.setState({
-                loading : false,
-                status : false
+                loading : false
             })
             return;
         }
 
         let repoLanguage = await connect("GET",repoDetails.data.languages_url);
         if(repoLanguage.status !== 200){
-            repoLanguage = {data:[]}
+            repoLanguage = {data:{}}
         }
-    
+
         this.setState({
             loading : false,
-            status : true,
             repoDetails : repoDetails.data,
-            repoLanguage : repoLanguage.data,
-            path : this.state.path
-        })
-    }
-
-    UpdatePath(newValue){
-        this.setState({
-            ...this.state,
-            path : newValue
-        })
-    }
-
-    AddPath(newValue){
-        if(this.state.path !== ""){
-            newValue = this.state.path + "/" + newValue;
-        }
-        this.setState({
-            ...this.state,
-            path : newValue
+            repoLanguage : repoLanguage.data
         })
     }
 
     render() { 
-
-        let bodyJSX = <CircularProgress size={35} className='my-5'/>;
-        if(!this.state.loading){
-            if(this.state.status){
-                bodyJSX = <div className='row m-0 pt-4'>
-                    <RepoProfile repo={this.state.repoDetails} language={this.state.repoLanguage}/>
-                    <RepoContent repoDetails={this.state.repoDetails} path={this.state.path} addPath={(value)=>{this.AddPath(value)}} updatePath={(value)=>{this.UpdatePath(value)}}/>
-                </div>
-            }
-            else{
-                bodyJSX = <div className='fw-bold fs-3 opacity-50'>
-                    404 <br></br> Repo not found !!!
-                </div>;
-            }
-        }
-
         return (
             <div className='App d-block'>
                  <Link className='text-light d-flex align-items-center p-3 text-decoration-none border-light border-bottom justify-content-between bg-dark' to='/'>
@@ -87,10 +56,22 @@ class repoPage extends React.Component {
                     </div>
                 </Link>
                 <div className='text-center text-light'>
-                    {bodyJSX}
+                    {
+                        this.state.loading
+                        ?<CircularProgress size={35} className='my-5'/>
+                        :(
+                            this.state.repoDetails
+                            ?<div className='row m-0 pt-4'>
+                                <RepoProfile repoDetails={this.state.repoDetails} repoLanguage={this.state.repoLanguage}/>
+                                <RepoContent repoDetails={this.state.repoDetails} />
+                            </div>
+                            :<div className='fw-bold fs-3 opacity-50'>
+                                404 <br></br> Repo not found !!!
+                            </div>
+                        )
+                    }
                 </div>
-            </div>
-            
+            </div> 
         );
     }
 }

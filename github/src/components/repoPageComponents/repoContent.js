@@ -1,40 +1,86 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CircularProgress, Breadcrumbs } from '@mui/material';
+import AceEditor from 'react-ace'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import FolderIcon from '@mui/icons-material/Folder';
 import connect from '../connector';
+import 'ace-builds/src-noconflict/theme-twilight';
+import 'ace-builds/src-noconflict/mode-python';
+import 'ace-builds/src-noconflict/mode-java';
+import 'ace-builds/src-noconflict/mode-text';
 
 class RepoContent extends React.Component {
 
-    state = {status : false,repoContent :[] }
+    state = {
+        status : false,
+        repoContent :[],
+        path :"",
+        file : ""
+    }
 
-    async componentDidMount(){
-        let repoContent = await connect("GET",this.props.repoDetails.contents_url.split("{")[0]+this.props.path);
+    componentDidMount(){
+        this.getRepoContents();     
+    }
 
+    componentDidUpdate(){
+        if(!this.state.status){
+            this.getRepoContents()
+        }
+    }
+
+    getRepoContents = async ()=>{
+        let repoContent = await connect("GET",this.props.repoDetails.contents_url.split("{")[0]+this.state.path);
         if(repoContent.status !== 200){
             repoContent = {data:[]}
         }
         this.setState({
+            ...this.state,
             status: true,
             repoContent : repoContent.data
-        })       
+        })
     }
 
-    async componentDidUpdate(){
-        if(!this.state.status){
-            let repoContent = await connect("GET",this.props.repoDetails.contents_url.split("{")[0]+this.props.path);
+    updatePath(newValue){
+        if(this.state.path === newValue) return;
 
-            if(repoContent.status !== 200){
-                repoContent = {data:[]}
-            }
-            
-            this.setState({
-                status: true,
-                repoContent : repoContent.data
-            })
+        this.setState({
+            status : false,
+            repoContent :[],
+            path : newValue,
+            file : false
+        })
+    }
+
+    addPath(newValue, file=false){
+        if(this.state.path !== ""){
+            newValue = this.state.path + "/" + newValue;
+        }
+        this.setState({
+            status : false,
+            repoContent :[],
+            path : newValue,
+            file : file
+        })
+    }
+
+
+    b64_to_utf8(str) {
+        return decodeURIComponent(escape(window.atob(str)));
+    }
+
+    getLanguageMode(fileName) {
+        const extension = fileName.split(".")[1];
+        switch (extension) {
+          case "py":
+            return "python";
+          case "java":
+            return "java";
+          default:
+            return "text";
         }
     }
+
 
     render() { 
         const repoContentCard = {
@@ -49,25 +95,26 @@ class RepoContent extends React.Component {
             "padding" : "0px 0px 20px 0px",
             "overflowX" : "hidden"
         };
-        let path = null;
+
+        let temp_path = null;
+
         return (
         <Card variant="outlined" className='col-10 col-lg-6 bg-dark text-center mx-auto my-3 p-2' style={repoContentCard}>
             <div className='px-3 py-2 text-start' >
                 <Breadcrumbs aria-label="breadcrumb" className=' fs-5 text-light'>
                     {
-                        [this.props.repoDetails.name,...this.props.path.split("/") ].map((item, ind)=>{
-                
-                            if(path !== null && path !== ""){
-                                path += "/"+item;
+                        [this.props.repoDetails.name,...this.state.path.split("/") ].map((item, ind)=>{
+                            if(temp_path !== null && temp_path !== ""){
+                                temp_path += "/"+item;
                             }
-                            else if(path !== null){
-                                path = item;
+                            else if(temp_path !== null){
+                                temp_path = item;
                             }
                             else{
-                                path = ""
+                                temp_path = ""
                             }
-                            let temp_path = path;
-                            return <Link underline="hover" key={ind} className='text-decoration-none text-light' onClick={()=>{this.props.updatePath(temp_path);this.setState({status:false, file:false})}}>
+                            let local_path = temp_path;
+                            return <Link underline="hover" key={ind} className='text-decoration-none text-light' onClick={()=>{this.updatePath(local_path)}}>
                                 {item}
                             </Link>
                         })
@@ -77,25 +124,44 @@ class RepoContent extends React.Component {
             </div> 
             <hr className='m-0 mt-2'/>
             <div style={repoContentBody}>
-                { this.state.status ?this.state.repoContent.map((item, ind)=>{
-                    if(item.type === "file" ){
-                        return <div className='d-flex p-2 border-bottom border-secondary repo-content' key={ind}>
-                            <InsertDriveFileIcon className='mx-2'/>
-                            <Link to={item.download_url} className='text-decoration-none'>
-                                {item.name}        
-                            </Link>
-                        </div>
-                        
-                    }
-                    else{
-                        return <div className='d-flex p-2 border-bottom border-secondary repo-content' key={ind}>
-                            <FolderIcon className='mx-2'/>
-                            <div onClick={()=>{this.props.addPath(item.name);this.setState({status:false})}} role='button' className='text-decoration-none text-primary'>
-                                {item.name}     
-                            </div>
-                        </div>
-                    }
-                }) : <CircularProgress size={35} className='my-5'/>} 
+                { 
+                    this.state.status 
+                    ?(
+                        this.state.file
+                        ?<div className='text-start p-3 bg-dark'>
+                            {
+                                <AceEditor
+                                    style={{width:"100%"}}  
+                                    theme='twilight' 
+                                    readOnly={true}
+                                    value={this.b64_to_utf8(this.state.repoContent.content)}
+                                    fontSize={16}
+                                    mode={this.getLanguageMode(this.state.repoContent.name)}
+                                />
+                            }
+                        </div>  
+                        :this.state.repoContent.map((item, ind)=>{
+                            if(item.type === "file" ){
+                                return <div className='d-flex p-2 border-bottom border-secondary repo-content' key={ind}>
+                                    <InsertDriveFileIcon className='mx-2'/>
+                                    <div onClick={()=>{this.addPath(item.name, true)}} role='button' className='text-decoration-none text-primary'>
+                                        {item.name}     
+                                    </div>
+                                </div>
+                                
+                            }
+                            else{
+                                return <div className='d-flex p-2 border-bottom border-secondary repo-content' key={ind}>
+                                    <FolderIcon className='mx-2'/>
+                                    <div onClick={()=>{this.addPath(item.name)}} role='button' className='text-decoration-none text-primary'>
+                                        {item.name}     
+                                    </div>
+                                </div>
+                            }
+                        }) 
+                    )
+                    :<CircularProgress size={35} className='my-5'/>
+                } 
             </div> 
         </Card>
         );

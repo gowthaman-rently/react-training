@@ -9,23 +9,23 @@ import SearchIcon from '@mui/icons-material/Search';
 
 class UserPage extends React.Component {
     state={
-        loading : true,
-        status : false,
+        loading : true
     }
     async componentDidMount(){
 
         const userid = window.location.toString().split("/")[3];
+
         const userDetails = await connect("GET",`https://api.github.com/users/${userid}`);
         if(userDetails.status !== 200){
             this.setState({
                 loading : false,
-                status : false
+                userDetails : null
             })
             return;
         }
 
         let userRepos = await connect("GET", userDetails.data.repos_url);
-        if(userDetails.status !== 200){
+        if(userRepos.status !== 200){
             userRepos = {data:[]}
         }
 
@@ -41,7 +41,6 @@ class UserPage extends React.Component {
 
         this.setState({
             loading : false,
-            status : true,
             userDetails : userDetails.data,
             userRepos : userRepos.data,
             userFollowers : userFollowers.data,
@@ -50,21 +49,6 @@ class UserPage extends React.Component {
     }
 
     render() { 
-
-        let bodyJSX = <CircularProgress size={35} className='my-5'/>;
-        if(!this.state.loading){
-            if(this.state.status){
-                bodyJSX = <div className='row m-0 pt-4'>
-                    <UserProfile user={this.state.userDetails}/>
-                    <UserDetails repos={this.state.userRepos} followers={this.state.userFollowers} following={this.state.userFollowing}/>
-                </div>
-            }
-            else{
-                bodyJSX = <div className='fw-bold fs-3 opacity-50'>
-                    404 <br></br> User not found !!!
-                </div>;
-            }
-        }
 
         return (
             <div className='App d-block'>
@@ -80,10 +64,22 @@ class UserPage extends React.Component {
                     </div>
                 </Link>
                 <div className='text-center text-light'>
-                    {bodyJSX}
+                    {
+                        this.state.loading
+                        ?<CircularProgress size={35} className='my-5'/>
+                        :(
+                            this.state.userDetails
+                            ?<div className='row m-0 pt-4'>
+                                <UserProfile user={this.state.userDetails}/>
+                                <UserDetails repos={this.state.userRepos} followers={this.state.userFollowers} following={this.state.userFollowing}/>
+                            </div>
+                            :<div className='fw-bold fs-3 opacity-50'>
+                                404 <br></br> User not found !!!
+                            </div>
+                        )
+                    }
                 </div>
-            </div>
-            
+            </div> 
         );
     }
 }
