@@ -19,8 +19,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 class App extends React.Component {
   constructor(props){ 
-    super(props) 
-        
+    super(props);        
     this.state = {
       task : [{"text":"Formative Assessment","status":false, "labels":["all"]},{"text":"Lab Record","status":false, "labels":["all"]},{"text":"Presonal Project","status":false, "labels":["all"]}],
       current_ind : 0,
@@ -139,39 +138,28 @@ class App extends React.Component {
           To Do App
         </div>
         <div id='task-container'>
-          <TabContext value={this.state.value}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <TabList onChange={this.handleChange} indicatorColor='#ffc107' >
-                <Tabs labels={this.state.labels}></Tabs>
-              </TabList>
-            </Box>
-            <TabPanel value={0} style={{padding:"0px"}}>
-              <Accordion  className="m-0"  expanded={true}>
-                <AccordionSummary>
-                <Typography className='fw-bold text-secondary fs-5'>Task</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <form onSubmit={(event)=>{event.preventDefault();this.addTask(); return false;}} >
-                    <Card className="task-card my-2">
-                      <TextField className="add-input" label="Add New Task" variant="standard" id="add-input" autoComplete='off'/>
-                      <IconButton type="submit" className='add-btn'><AddIcon/></IconButton>               
-                    </Card>
-                  </form>
-                  {items.length !== 0?items:<div style={{fontWeight:"bold",textAlign:"center", padding:"10px"}}>No Task</div>}
-                </AccordionDetails>
-              </Accordion>
-              <Accordion className="m-0" >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />} >
-                <Typography className="fw-bold text-secondary fs-5" >Completed</Typography>
-                </AccordionSummary>
-                <AccordionDetails >
-                    {com_items.length !== 0?com_items:<div style={{fontWeight:"bold",textAlign:"center",padding:"10px"}}>No Task</div>}
-                </AccordionDetails>
-              </Accordion>
-            </TabPanel>
-            <TabPanel value={1} style={{padding:"0px"}}>
-            </TabPanel>
-          </TabContext>
+            <Accordion  className="m-0"  expanded={true}>
+              <AccordionSummary>
+              <Typography className='fw-bold text-secondary fs-5'>Task</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <form onSubmit={(event)=>{event.preventDefault();this.addTask(); return false;}} >
+                  <Card className="task-card my-2">
+                    <TextField className="add-input" label="Add New Task" variant="standard" id="add-input" autoComplete='off' placeholder='Add New Task'/>
+                    <IconButton type="submit" className='add-btn' name="addTask"  aria-label='addTask'><AddIcon/></IconButton>               
+                  </Card>
+                </form>
+                {items.length !== 0?items:<div style={{fontWeight:"bold",textAlign:"center", padding:"10px"}}>No Task</div>}
+              </AccordionDetails>
+            </Accordion>
+            <Accordion className="m-0" >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />} >
+              <Typography className="fw-bold text-secondary fs-5" >Completed</Typography>
+              </AccordionSummary>
+              <AccordionDetails >
+                  {com_items.length !== 0?com_items:<div style={{fontWeight:"bold",textAlign:"center",padding:"10px"}}>No Task</div>}
+              </AccordionDetails>
+            </Accordion>
         </div>
       </div>
     )
@@ -179,18 +167,5 @@ class App extends React.Component {
 }
 
 
-class Tabs extends React.Component {
-  
-  render() { 
-    let tabsList = this.props.labels.map((item, ind)=>{
-      return <Tab label={item} value={ind} key={ind} className='text-dark fw-bold fs-6 border-bottom border-warning text-capitalize'/>
-    })
-    return (
-      < >
-        {tabsList}
-      </>
-    );
-  }
-}
 
 export default App;
