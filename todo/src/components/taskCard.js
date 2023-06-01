@@ -47,7 +47,7 @@ class TaskCard extends React.Component{
             edit_btn = ""
         }
         else{
-            edit_btn = <IconButton onClick={()=>this.handleModal()} title='Delete' className='text-danger'>
+            edit_btn = <IconButton onClick={()=>this.handleModal()} title='Edit' className='text-danger'>
                 <EditIcon className="text-secondary"></EditIcon>
             </IconButton>;
         }
@@ -80,7 +80,7 @@ class TaskCard extends React.Component{
             <div className="task-input-container">
                 <input className={this.props.item.status ?"task-input completed":"task-input"} type="text" value={this.props.item.text} id={"task-"+this.props.ind} disabled onClick={()=>this.handleModal()}/>
             </div>
-            <div className="task-btn-container"> 
+            <div className="task-btn-container">
                 {labels}
                 {edit_btn}
                 <IconButton onClick={()=>this.props.deleteTask(this.props.ind)} title='Delete' className='text-danger'>
@@ -111,9 +111,9 @@ class TaskCard extends React.Component{
                             input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
                             renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => (
-                                    <Chip key={value} label={value} />
-                                ))}
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value} />
+                                    ))}
                                 </Box>
                             )}
                         >
@@ -135,7 +135,6 @@ class TaskCard extends React.Component{
                         Save
                     </Button>
                 </div>
-                
             </Box>
         </Modal>
 

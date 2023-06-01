@@ -121,9 +121,17 @@ class App extends React.Component {
     const com_items = [];
     this.state.task
     .map((item,ind) => {
-      const cardJSX = <TaskCard ind={ind} item={item}  key={ind} labels={this.state.labels}
-          drop = {(event, ind)=>this.drop(event, ind)} allowDrop = {(event)=>this.allowDrop(event)} drag={(event)=>this.drag(event)}
-          handleTask ={(ind)=>this.handleTask(ind)} editTask = {(ind, event)=>this.editTask(ind, event)} deleteTask={(ind)=>this.deleteTask(ind)}
+      const cardJSX = <TaskCard 
+          ind={ind} 
+          item={item}
+          key={ind} 
+          labels={this.state.labels}
+          drop = {(event, ind)=>this.drop(event, ind)} 
+          allowDrop = {(event)=>this.allowDrop(event)} 
+          drag={(event)=>this.drag(event)}
+          handleTask ={(ind)=>this.handleTask(ind)} 
+          editTask = {(ind, event)=>this.editTask(ind, event)} 
+          deleteTask={(ind)=>this.deleteTask(ind)}
           handleTaskLabel = {(ind, labels)=>this.handleTaskLabel(ind,labels)}
         ></TaskCard>;
       
