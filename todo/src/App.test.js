@@ -10,7 +10,6 @@ test('check to do app heading', () => {
   render(<App />);
   const linkElement = screen.getByText(/to do app/i);
   expect(linkElement).toBeInTheDocument();
-
 });
 
 test('Typing new task without clicking add', () => {

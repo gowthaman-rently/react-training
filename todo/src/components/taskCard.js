@@ -47,7 +47,7 @@ class TaskCard extends React.Component{
             edit_btn = ""
         }
         else{
-            edit_btn = <IconButton onClick={()=>this.handleModal()} title='Edit' className='text-danger'>
+            edit_btn = <IconButton onClick={()=>this.handleModal()} title='Edit' className='text-danger' aria-label='edit-btn'>
                 <EditIcon className="text-secondary"></EditIcon>
             </IconButton>;
         }
@@ -74,7 +74,7 @@ class TaskCard extends React.Component{
         )
 
         return <>
-        <Card variant="outlined" draggable="true" id={this.props.ind} className='task-card' key={this.props.ind} 
+        <Card variant="outlined" draggable="true" id={this.props.ind} className='task-card' key={this.props.ind} aria-label='task-card'
             onDrop={(event)=>this.props.drop(event, this.props.ind)} onDragOver={(event)=>this.props.allowDrop(event)} onDragStart={(event)=>{this.props.drag(event)}} >
             <Checkbox  onClick={()=>this.props.handleTask(this.props.ind)} defaultChecked={this.props.item.status?true:false}/>
             <div className="task-input-container">
